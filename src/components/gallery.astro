@@ -1,0 +1,64 @@
+---
+import type { Project } from "../../public/data/site-config";
+import ExternalLink from "./ui/ExternalLink.astro";
+
+interface Props {
+  data: Project;
+}
+
+const {
+  data: { name, thumbnails, type, info, stack, repo, demo },
+} = Astro.props;
+---
+
+<section class="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-2">
+  <picture class="rounded-md overflow-hidden md:sticky md:top-0 relative">
+    <img
+      class="preview"
+      src={thumbnails[0]}
+      alt=""
+      style={`view-transition-name: preview-${name}-img`}
+    />
+  </picture>
+  <aside
+    class="flex w-full overflow-hidden justify-start flex-row md:flex-col items-center md:justify-start rounded-md gap-2"
+  >
+    {
+      thumbnails.map((i, _idx) => {
+        return (
+          <>
+            <img
+              src={i}
+              alt=""
+              class={`sm-preview-items w-20 md:w-full rounded-md border-2 border-dark-800 hover:border-dark-700 duration-300 cursor-pointer`}
+            />
+          </>
+        );
+      })
+    }
+  </aside>
+</section>
+
+<style>
+  section picture {
+    aspect-ratio: 3 / 2;
+  }
+</style>
+
+<script>
+  const thumbnails = document.querySelectorAll(".sm-preview-items");
+
+  thumbnails.forEach((thumbnail) => {
+    thumbnail.addEventListener("click", () => {
+      const container = thumbnail.parentElement?.parentElement; // container
+      const preview = container?.querySelector("picture img");
+
+      const url = thumbnail.getAttribute("src") || "";
+      if (url === preview?.getAttribute("src")) return;
+
+      document.startViewTransition(() => {
+        preview?.setAttribute("src", url);
+      });
+    });
+  });
+</script>

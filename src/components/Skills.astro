@@ -1,0 +1,48 @@
+---
+import { siteConfig } from "../../public/data/site-config";
+import Paragraph from "./ui/Paragraph.astro";
+import SubTitle from "./ui/SubTitle.astro";
+
+const {
+  sections: {
+    skills: { data, info, title },
+  },
+} = siteConfig;
+
+const sections = Object.keys(data) as Array<keyof typeof data>;
+---
+
+<section>
+  <SubTitle>{title}</SubTitle>
+  <Paragraph>
+    {info}
+  </Paragraph>
+
+  <div class="flex flex-col items-start gap-8 mt-4">
+    {
+      sections.map((item) => {
+        const currentSections = data[item];
+        const { title, data: sectionData } = currentSections;
+        return (
+          <div class="flex w-full flex-col items-start gap-3">
+            <h4 class="font-extralight">{title}</h4>
+
+            <div class="flex flex-wrap gap-3 w-full">
+              {sectionData.map(({ icon, name }, index) => (
+                <div
+                  class=" bg-dark-900 flex items-center justify-start
+                 rounded-md border w-max px-4 border-dark-800 py-2 gap-2"
+                >
+                  <div class="*:w-6 *:h-6">
+                    <Fragment set:html={icon} />
+                  </div>
+                  <span class="font-extralight text-sm">{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>

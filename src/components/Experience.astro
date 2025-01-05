@@ -1,0 +1,51 @@
+---
+import { siteConfig } from "../../public/data/site-config";
+import ExternalLink from "./ui/ExternalLink.astro";
+import Paragraph from "./ui/Paragraph.astro";
+import SubTitle from "./ui/SubTitle.astro";
+const {
+  sections: {
+    workExperience: { data, info, title },
+  },
+} = siteConfig;
+---
+
+<section>
+  <SubTitle class="py-2">{title}</SubTitle>
+  <Paragraph>
+    <span>{info}</span>
+  </Paragraph>
+
+  {
+    data.map(({ companyLink, companyName, job, jobInfo, time }) => {
+      return (
+        <div class="border-l pl-3 border-dark-900 mt-4 flex flex-col gap-3">
+          <div>
+            <span class="text-xs md:text-sm font-light text-dark-200 flex items-center justify-start gap-1 py-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+              >
+                <g fill="none" stroke="currentColor" stroke-width="1">
+                  <>
+                    <circle cx="12" cy="12" r="9" />
+                    <path
+                      stroke-linecap="round"
+                      d="M16.5 12h-4.25a.25.25 0 0 1-.25-.25V8.5"
+                    />
+                  </>
+                </g>
+              </svg>
+              {time}
+            </span>
+            <h3 class="text-xl text-dark-200 font-normal">{job}</h3>
+            <ExternalLink href={companyLink}>{companyName}</ExternalLink>
+          </div>
+          <Paragraph class="text-dark-300 text-base">{jobInfo}</Paragraph>
+        </div>
+      );
+    })
+  }
+</section>

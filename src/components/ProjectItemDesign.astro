@@ -1,0 +1,17 @@
+---
+import type { Project } from "../../public/data/site-config";
+import Gallery from "./gallery.astro";
+
+interface Props {
+  data: Project;
+}
+
+const { data } = Astro.props;
+
+const { name, stack, repo, demo } = data;
+---
+
+<div>
+  <h2 class="text-xl text-dark-200 font-normal py-2">{name}</h2>
+  <Gallery data={data} />
+</div>

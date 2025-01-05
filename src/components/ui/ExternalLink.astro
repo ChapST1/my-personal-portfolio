@@ -1,0 +1,33 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { twMerge } from "tailwind-merge";
+
+interface Props extends HTMLAttributes<"a"> {}
+---
+
+<a
+  href={Astro.props.href}
+  target="_blank"
+  class={twMerge(
+    "text-sm text-dark-200 font-extralight group w-max hover:text-dark-50 duration-300 group hover:border-dark-400 flex items-center justify-start gap-1",
+    Astro.props.class,
+  )}
+>
+  <span
+    class="border-b border-dashed border-dark-200 group-hover:border-dark-50 duration-300"
+    ><slot /></span
+  >
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="size-4 group-hover:translate-x-1 duration-300"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="none"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.5"
+      d="M6 18L18 6m0 0H9m9 0v9"></path>
+  </svg>
+</a>

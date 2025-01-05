@@ -1,0 +1,27 @@
+---
+import { siteConfig } from "../../public/data/site-config";
+
+const { ownerSocialMedia } = siteConfig;
+---
+
+<nav
+  class="flex px-4 md:px-2 items-center justify-between h-16 border-dark-900 border-b border-dotted"
+>
+  <a href="/" class="flex items-center justify-start gap-2 select-none">
+    <img src="/logo.jpeg" class="w-8 md:w-12 rounded-full" alt="logo" />
+    <h2 class="font-extralight text-dark-100">Christian Ap</h2>
+  </a>
+
+  <div class="flex items-center justify-start gap-1">
+    {
+      ownerSocialMedia.map((i) => (
+        <a
+          href={i.link}
+          target={i.link === "#" ? "_top" : "_blank"}
+          class="flex items-center justify-center gap-2 *:w-[50%] rounded-full size-8 bg-dark-900 *:text-dark-300 *:hover:text-dark-50 *:duration-300"
+          set:html={i.icon}
+        />
+      ))
+    }
+  </div>
+</nav>

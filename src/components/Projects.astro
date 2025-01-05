@@ -1,0 +1,63 @@
+---
+import ProjectItemDev from "./ProjectItemDev.astro";
+import ProjectItemDesign from "./ProjectItemDesign.astro";
+import { siteConfig } from "../../public/data/site-config";
+import Paragraph from "./ui/Paragraph.astro";
+import SubTitle from "./ui/SubTitle.astro";
+import Gallery from "./gallery.astro";
+
+const {
+  sections: {
+    projects: { info, title, designProjects, devProjects },
+  },
+} = siteConfig;
+---
+
+<section>
+  <SubTitle>{title}</SubTitle>
+  <Paragraph>{info}</Paragraph>
+
+  <div class="mt-5">
+    <div class="grid grid-cols-1 gap-8">
+      {
+        devProjects.map((item) => {
+          return <ProjectItemDev data={item} />;
+        })
+      }
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <SubTitle> Proyectos de Diseño </SubTitle>
+    <div class="grid grid-cols-1 gap-8">
+      {
+        designProjects.map((item) => {
+          return <ProjectItemDesign data={item} />;
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style></style>
+
+<script>
+  const toggleSeeMore = document.querySelectorAll(".toogle-see-more");
+  toggleSeeMore.forEach((item) => {
+    item.addEventListener("click", () => {
+      const toogleTextElement = item.querySelector("span");
+      const parent = item.parentElement;
+      const paragraph = parent?.querySelector(".info");
+      const icon = parent?.querySelector(".arrow-icon");
+
+      icon?.classList.toggle("rotate-180");
+      paragraph?.classList.toggle("line-clamp-5");
+
+      if (paragraph?.classList.contains("line-clamp-5")) {
+        toogleTextElement.textContent = "Ver más";
+      } else {
+        toogleTextElement.textContent = "Ver menos";
+      }
+    });
+  });
+</script>
