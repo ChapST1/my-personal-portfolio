@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 ---
@@ -16,8 +15,6 @@ import Footer from "../components/Footer.astro";
 			content="Soy un diseñador apasionado por el desarrollo web y con experiencia en la creación de interfaces de usuario atractivas e intuitivas. Estoy motivado por aprender y crecer en un equipo de desarrolladores y me entusiasma la idea de contribuir a proyectos desafiantes e innovadores."
 		/>
 		<title>Portafolio - Christian Ap</title>
-
-		<ClientRouter />
 	</head>
 	<body class="max-w-5xl mx-auto">
 		<main>
@@ -29,15 +26,12 @@ import Footer from "../components/Footer.astro";
 </html>
 
 <style is:global>
-	:root {
-		color-scheme: light dark;
-	}
-
 	html {
 		@apply bg-dark-950 bg-gradient-to-tl from-dark-950 via-dark-900 to-dark-950;
 		background-attachment: fixed;
 		scrollbar-width: thin;
 		scrollbar-color: theme("colors.dark.900") transparent;
+		color-scheme: dark;
 	}
 	html,
 	body {

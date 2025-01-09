@@ -40,11 +40,7 @@ const { name, info, stack, repo, demo } = data;
         <div
           class="group toogle-see-more md:hidden w-max text-sm select-none cursor-pointer hover:text-dark-50 duration-300 font-extralight text-dark-100 flex items-center justify-start gap-1"
         >
-          <span
-            class="border-b border-dark-200 border-dashed group-hover:border-dark-50 duration-300"
-          >
-            Ver más
-          </span>
+          <span class="duration-300"> Ver más </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -75,29 +71,4 @@ const { name, info, stack, repo, demo } = data;
     </footer>
   </div>
   <Gallery data={data} />
-  <!-- <article class="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-2">
-    <picture class="rounded-md overflow-hidden">
-      <img
-        class="preview"
-        src={thumbnails[0]}
-        alt=""
-        style={`view-transition-name: preview-${name}-img`}
-      />
-    </picture>
-    <figure
-      class="flex w-full overflow-hidden justify-start flex-row md:flex-col items-center md:justify-start rounded-md gap-2"
-    >
-      {
-        thumbnails.map((i, _idx) => {
-          return (
-            <img
-              src={i}
-              alt=""
-              class={`sm-preview-items w-20 md:w-full rounded-md border-2 border-dark-800 hover:border-dark-700 duration-300 cursor-pointer`}
-            />
-          );
-        })
-      }
-    </figure>
-  </article> -->
 </div>

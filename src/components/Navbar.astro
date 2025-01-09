@@ -20,6 +20,7 @@ const { ownerSocialMedia } = siteConfig;
           target={i.link === "#" ? "_top" : "_blank"}
           class="flex items-center justify-center gap-2 *:w-[50%] rounded-full size-8 bg-dark-900 *:text-dark-300 *:hover:text-dark-50 *:duration-300"
           set:html={i.icon}
+          title={i.name}
         />
       ))
     }

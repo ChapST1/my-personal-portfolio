@@ -1,7 +1,6 @@
 ---
 import type { Project } from "../../public/data/site-config";
-import ExternalLink from "./ui/ExternalLink.astro";
-
+import { genereateFullImageQualityUrl } from "../utils/index";
 interface Props {
   data: Project;
 }
@@ -11,54 +10,278 @@ const {
 } = Astro.props;
 ---
 
-<section class="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-2">
-  <picture class="rounded-md overflow-hidden md:sticky md:top-0 relative">
-    <img
-      class="preview"
-      src={thumbnails[0]}
-      alt=""
-      style={`view-transition-name: preview-${name}-img`}
-    />
-  </picture>
-  <aside
-    class="flex w-full overflow-hidden justify-start flex-row md:flex-col items-center md:justify-start rounded-md gap-2"
-  >
-    {
-      thumbnails.map((i, _idx) => {
-        return (
-          <>
-            <img
-              src={i}
-              alt=""
-              class={`sm-preview-items w-20 md:w-full rounded-md border-2 border-dark-800 hover:border-dark-700 duration-300 cursor-pointer`}
-            />
-          </>
-        );
-      })
-    }
-  </aside>
+<section>
+  <!-- /* From Uiverse.io by AnthonyPreite */  -->
+  <div class="pb-3">
+    <span class="text-dark-200 font-extralight text-xs"
+      >Mostrar imagen - HD</span
+    >
+    <label aria-label="switch" class="switch">
+      <input class="checkbox max-resolution-toggle" type="checkbox" />
+      <span class="slider round"></span>
+    </label>
+  </div>
+  <section class="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-2">
+    <picture class="rounded-md overflow-hidden md:sticky md:top-0 relative">
+      <img
+        loading="lazy"
+        class="preview duration-200 z-10 w-full h-auto"
+        src={thumbnails[0]}
+        data-full-image-quality-url={genereateFullImageQualityUrl(
+          thumbnails[0],
+        )}
+        data-low-image-quality-url={thumbnails[0]}
+        data-view-transition-name={`preview-${name.split(" ").join("-")}-img`}
+        data-current-resolution="low"
+        data-is-full-image-loaded="false"
+        alt={`Imágen - ${name}`}
+        style={`view-transition-name: preview-${name.split(" ").join("-")}-img`}
+      />
+    </picture>
+    <aside
+      class="sm-preview-container flex w-full overflow-hidden justify-start flex-row md:flex-col items-center md:justify-start rounded-md gap-2"
+    >
+      {
+        thumbnails.map((i, _idx) => {
+          return (
+            <>
+              <img
+                src={i}
+                alt={`Miniatura - ${name}`}
+                class={`sm-preview-items w-20 md:w-full h-auto rounded-md border-2 border-dark-800 hover:border-dark-700 duration-300 cursor-pointer`}
+                data-full-image-quality-url={genereateFullImageQualityUrl(i)}
+                data-low-image-quality-url={i}
+                data-view-transition-name={`preview-${name.split(" ").join("-")}-img`}
+                data-current-resolution="low"
+                data-is-full-image-loaded="false"
+              />
+            </>
+          );
+        })
+      }
+    </aside>
+  </section>
 </section>
 
 <style>
   section picture {
     aspect-ratio: 3 / 2;
   }
+
+  /* From Uiverse.io by AnthonyPreite */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+  }
+
+  .switch .checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: theme("colors.dark.900");
+    border: 1px solid theme("colors.dark.800");
+    transition: 0.4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: theme("colors.dark.200");
+    transition: 0.4s;
+  }
+
+  .checkbox:checked + .slider {
+    background-color: theme("colors.dark.800");
+    border: 1px solid theme("colors.dark.700");
+  }
+
+  .checkbox:checked + .slider:before {
+    transform: translateX(14px);
+    background-color: theme("colors.dark.50");
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  .sm-preview-container img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .disable-thumbs img {
+    opacity: 0.3;
+    transition: 0.5s;
+    pointer-events: none;
+  }
 </style>
 
 <script>
-  const thumbnails = document.querySelectorAll(".sm-preview-items");
+  const fullQualityImgSwitches = document.querySelectorAll(
+    ".max-resolution-toggle",
+  );
+  const thumbnails: NodeListOf<HTMLImageElement> =
+    document.querySelectorAll(".sm-preview-items");
 
   thumbnails.forEach((thumbnail) => {
     thumbnail.addEventListener("click", () => {
-      const container = thumbnail.parentElement?.parentElement; // container
-      const preview = container?.querySelector("picture img");
+      const container = thumbnail.parentElement?.parentElement?.parentElement; // container
+      const toggle = container?.querySelector(
+        ".max-resolution-toggle",
+      ) as HTMLInputElement;
+
+      const preview = container?.querySelector(".preview") as HTMLImageElement;
+      const smPreviewImg = container?.querySelector(
+        `.sm-preview-container img[src='${preview.dataset.lowImageQualityUrl}']`,
+      ) as HTMLImageElement;
+
+      const {
+        currentResolution,
+        fullImageQualityUrl,
+        lowImageQualityUrl,
+        isFullImageLoaded,
+      } = thumbnail.dataset;
+
+      toggle.checked =
+        currentResolution === "full" &&
+        JSON.parse(`${smPreviewImg.dataset.isFullImageLoaded}`);
 
       const url = thumbnail.getAttribute("src") || "";
       if (url === preview?.getAttribute("src")) return;
 
       document.startViewTransition(() => {
-        preview?.setAttribute("src", url);
+        preview.src = url;
       });
+
+      preview.dataset.fullImageQualityUrl = fullImageQualityUrl;
+      preview.dataset.lowImageQualityUrl = lowImageQualityUrl;
+      preview.dataset.currentResolution = currentResolution;
+      preview.dataset.isFullImageLoaded = isFullImageLoaded;
     });
   });
+
+  // img quality
+  fullQualityImgSwitches.forEach((toggle) => {
+    toggle.addEventListener("change", async (e) => {
+      const toggleParent = toggle.parentElement;
+      const container = toggle.parentElement?.parentElement?.parentElement;
+      const previewImg = container?.querySelector(
+        ".preview",
+      ) as HTMLImageElement;
+      const smPreviewImg = container?.querySelector(
+        `.sm-preview-container img[src='${previewImg.dataset.lowImageQualityUrl}']`,
+      ) as HTMLImageElement;
+      const previewImageParent = previewImg.parentElement;
+      const smPreviewImgParent = smPreviewImg.parentElement;
+
+      // disable toggle
+      if (!toggleParent || !smPreviewImg || !smPreviewImgParent) return;
+
+      toggleParent.style.pointerEvents = "none";
+      toggleParent.style.opacity = ".3";
+
+      // smPreviewImgParent.style.pointerEvents = "none";
+      // smPreviewImgParent.style.opacity = ".3";
+
+      smPreviewImgParent.classList.add("disable-thumbs");
+      await loadImage(
+        previewImg,
+        smPreviewImg,
+        previewImageParent as HTMLElement,
+      );
+      // enable toogle
+      toggleParent.style.pointerEvents = "auto";
+      toggleParent.style.opacity = "1";
+
+      smPreviewImgParent.classList.remove("disable-thumbs");
+    });
+  });
+
+  async function loadImage(
+    currentTarget: HTMLImageElement,
+    smPreviewImg: HTMLImageElement,
+    currentTargetParent: HTMLPictureElement,
+  ) {
+    /** attributes */
+    const {
+      currentResolution: resolution,
+      fullImageQualityUrl,
+      lowImageQualityUrl,
+      isFullImageLoaded = "false",
+    } = currentTarget.dataset;
+
+    const currentResolution = resolution as "full" | "low";
+    const isLowResolution = currentResolution === "low";
+
+    const currentUrl = isLowResolution
+      ? fullImageQualityUrl
+      : lowImageQualityUrl;
+
+    if (!JSON.parse(isFullImageLoaded)) {
+      // add placeholder when image is loading
+      currentTarget.style.filter = "blur(5px)";
+
+      const imageElement = cloneTarget(currentTarget);
+      // add src -> img;
+      imageElement.src = `${currentUrl}`;
+      imageElement.style.filter = "none";
+      imageElement.style.zIndex = "100";
+      imageElement.classList.add("absolute", "top-0", "left-0");
+      currentTargetParent.appendChild(imageElement);
+
+      const isLoaded = await isImageLoaded(imageElement);
+
+      if (isLoaded) {
+        currentTarget.remove();
+        imageElement.dataset.isFullImageLoaded = "true";
+        imageElement.dataset.currentResolution = "full";
+
+        // inject data to small images preview
+        smPreviewImg.dataset.isFullImageLoaded = "true";
+      }
+    }
+    if (JSON.parse(isFullImageLoaded)) {
+      // current target -> change url
+      console.log("no placeholder");
+      console.log({ currentUrl });
+      currentTarget.src = `${currentUrl}`;
+      currentTarget.dataset.currentResolution = isLowResolution
+        ? "full"
+        : "low";
+    }
+  }
+
+  function isImageLoaded(target: HTMLImageElement) {
+    return new Promise((res) => {
+      target.onload = () => res(true);
+      target.onerror = () => res(false);
+    });
+  }
+
+  function cloneTarget(target: HTMLImageElement): HTMLImageElement {
+    /** Elements */
+    const placeholder = target;
+    const clonedTarget = placeholder.cloneNode(true);
+
+    return clonedTarget as HTMLImageElement;
+  }
 </script>
